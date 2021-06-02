@@ -17,11 +17,17 @@ fun main() {
     println("startado")
     server.awaitTermination()
 }
+
 @Singleton
 class FuncionarEndPoint : FuncionarioServiceGrpc.FuncionarioServiceImplBase() {
     override fun cadastrar(request: FuncionarioRequest?, responseObserver: StreamObserver<FuncionarioResponse>?) {
         println(request!!)
-        val nome = request?.nome
+
+        var nome: String? = request?.nome
+        if (!request.hasField(FuncionarioRequest.getDescriptor().findFieldByName("nome"))) {
+            nome = "[????]"
+        }
+
         val instant = LocalDateTime.now().atZone(ZoneId.of("UTC")).toInstant()
         val criadoEm = Timestamp.newBuilder()
             .setSeconds(instant.epochSecond)
